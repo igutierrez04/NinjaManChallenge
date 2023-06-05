@@ -70,6 +70,7 @@
 </body>
 <!-- End of HTML -->
 <script type="text/javascript">
+    var world = document.querySelector("#world");
     var map = [
         [1,1,1,1,1,1,1,1],
         [1,0,2,2,3,2,3,1],
@@ -83,25 +84,57 @@
         [1,3,2,2,3,2,3,1],
         [1,1,1,1,1,1,1,1],
     ];
+    
+    function drawWorld(newArr){
+    output = '';
     var worldDict = {
         0: "blank",
         1: "wall",
         2: "sushi",
         3: "onigiri"
     };
-    
-    function drawWorld(){
-        output = '';
-        for(var row = 0; row < map.length; row++){ // this runs through each array
-            output += "<div class='row'>"
-            for(var x = 0; x < map[row].length; x++){ // this runs through each piece of information in the array
-                output += "<div class= '" + worldDict[map[row][x]] + "'></div>";  
-            }
-            output += "</div>";
+    for(var mapRow = 0; mapRow < newArr.length; mapRow++){ // this runs through each array
+        output += "<div class='row'>"
+        for(var mapColumn = 0; mapColumn < newArr[mapRow].length; mapColumn++){ // this runs through each piece of information in the array
+            output += "<div class= '" + worldDict[newArr[mapRow][mapColumn]] + "'></div>";  
         }
-        document.getElementById('world').innerHTML = output;
+        output += "</div>";
     }
-    drawWorld();
+    world.innerHTML = output;
+    map = newArr;
+}
+
+function createWorld(rows, columns){ // any time the world is refreshed itll create a new world
+    newArr = [];
+    for (var i = 0; i < rows; i++){ // this creates an empty array per number that is input as rows
+        newArr.push([]);
+        for(var d = 0; d < columns; d++){ // this adds a random number betweem 0-3 to each array
+            if(i === 0 || i === rows - 1 || d === 0 || d === columns - 1){
+                newArr[i].push(1);
+            }
+            else {
+                var randomBlock = Math.floor(Math.random() * (0, 3 + 1));
+                if(randomBlock === 3){ // this piece will add onigiri 
+                    newArr[i].push(3);
+                }
+                else if(randomBlock === 2){ // this piece will add sushi
+                    newArr[i].push(2);
+                }
+                else if(randomBlock === 1){ // this piece will add a wall
+                    newArr[i].push(1);
+                }
+                else{
+                    newArr[i].push(0); // this piece will add a blank
+                }
+            }
+        }
+    }
+    // return newArr;
+    newArr[1][1] = 1;
+    newArr[rows-2][columns-2] = 1;
+    // console.log(newArr)
+    drawWorld(newArr)
+}
 
     var score = 0;
     
@@ -176,9 +209,10 @@
         }
         map[ninjaman.y][ninjaman.x] = 0;
         document.querySelector('#score').textContent = score; // updates score for player to see 
-        drawWorld();
+        drawWorld(map);
         drawNinjaman();
     }
+    createWorld(20,20)
 // End of JavaScript
 </script>
 </html>
